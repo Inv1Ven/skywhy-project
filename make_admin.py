@@ -7,7 +7,7 @@ django.setup()
 from django.contrib.auth.models import User
 
 username = 'skywalker'
-password = 'твой_пароль'
+password = 'iphone16promaxtop'
 email = 'admin@example.com'
 
 User.objects.filter(username=username).delete()
