@@ -75,11 +75,14 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+
+
+import os
 import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/mysite',
+        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/mysite'),
         conn_max_age=600
     )
 }
