@@ -1,0 +1,32 @@
+<h3 style="margin-top: 40px; color: #fff;">Оставить комментарий</h3>
+
+<style>
+    /* Стили для полей формы комментария */
+    .comment-form p { margin-bottom: 15px; }
+    .comment-form label { display: block; margin-bottom: 5px; color: #ddd; font-weight: bold; }
+    .comment-form input[type="text"], 
+    .comment-form input[type="email"], 
+    .comment-form textarea {
+        width: 100%; 
+        padding: 10px; 
+        background: #222; 
+        border: 1px solid #444; 
+        color: #fff; 
+        border-radius: 4px; 
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    .comment-form input:focus, 
+    .comment-form textarea:focus { 
+        border-color: #ff8c00; 
+        outline: none; 
+    }
+</style>
+
+<form method="post" class="comment-form" style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" style="background: #ff8c00; color: #000; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        ОТПРАВИТЬ
+    </button>
+</form>

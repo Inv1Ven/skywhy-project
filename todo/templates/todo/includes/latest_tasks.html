@@ -1,0 +1,11 @@
+<ul style="list-style-type: none; padding: 0; margin: 0;">
+    {% for task in latest_tasks %}
+        <li style="margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+            <a href="{{ task.get_absolute_url }}" style="color: #ff8c00; text-decoration: none;">
+                {{ task.title }}
+            </a>
+        </li>
+    {% empty %}
+        <li style="color: #777;">Скинов пока нет.</li>
+    {% endfor %}
+</ul>

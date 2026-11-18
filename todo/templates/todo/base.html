@@ -1,0 +1,68 @@
+{% load todo_tags %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CS2 Skin Market{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0f0f;
+            color: #ffffff;
+            margin: 0;
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #ff8c00;
+            font-size: 36px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header h1 img {
+            height: 40px;
+            vertical-align: middle;
+            margin-right: 15px;
+        }
+        .header p {
+            color: #888;
+            font-size: 16px;
+        }
+        .rss-btn {
+            background: #333; color: #ff8c00; padding: 8px 15px; 
+            border-radius: 20px; text-decoration: none; 
+            font-size: 14px; border: 1px solid #444; 
+            display: inline-block; margin-top: 10px;
+        }
+        .rss-btn:hover { background: #444; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="header">
+        {% block tag_header %}{% endblock %}
+
+        <h1>
+            <img src="https://upload.wikimedia.org/wikipedia/en/2/23/Counter-Strike_2_logo.svg" alt="CS2">
+            CS2 РЫНОК СКИНОВ
+        </h1>
+        <p>Торговая площадка скинов</p>
+        
+        <a href="{% url 'todo:task_feed' %}" class="rss-btn">📡 Подписаться на RSS-ленту</a>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

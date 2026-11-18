@@ -1,0 +1,80 @@
+{% extends 'todo/base.html' %}
+{% load todo_tags %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+    <div style="max-width: 800px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #333;">
+        <a href="{% url 'todo:task_list' %}" style="color: #ff8c00; text-decoration: none; font-weight: bold;">← Назад в магазин</a>
+        <hr style="border-color: #333; margin: 20px 0;">
+
+        <h1 style="color: #ff8c00; margin-bottom: 10px;">{{ task.title }}</h1>
+        
+        <p style="color: #777; font-size: 14px; margin-bottom: 15px;">
+            Продавец: <strong style="color: #fff;">{{ task.author.username }}</strong> | 
+            Добавлено: {{ task.publish|date:"d.m.Y H:i" }}
+        </p>
+
+        <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center;">
+            <span style="color: #777; font-size: 14px; margin-right: 5px;">Теги:</span>
+            {% for tag in task.tags.all %}
+                <a href="{% url 'todo:task_list_by_tag' tag.name %}" style="background: #333; color: #ff8c00; padding: 3px 10px; border-radius: 12px; font-size: 13px; text-decoration: none; display: inline-block;">
+                    {{ tag.name }}
+                </a>
+            {% empty %}
+                <span style="color: #555; font-size: 14px;">нет</span>
+            {% endfor %}
+        </div>
+        
+        <div style="font-size: 18px; line-height: 1.6; margin-bottom: 30px; color: #ddd; background: #111; padding: 20px; border-radius: 5px;">
+            {{ task.content|markdown }}
+        </div>
+
+        <!-- Кнопка поделиться -->
+        <div style="margin-bottom: 30px;">
+             <a href="{% url 'todo:task_share' task.id %}" class="btn-view" style="background-color: #ff8c00; color: #000; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">
+                 📤 Поделиться скином
+             </a>
+        </div>
+
+        <hr style="border-color: #333; margin: 40px 0;">
+
+        <h3 style="color: #fff;">Похожие скины</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
+            {% for similar in similar_tasks %}
+                <div style="background: #222; border: 1px solid #444; padding: 15px; border-radius: 5px; width: 200px;">
+                    <a href="{{ similar.get_absolute_url }}" style="font-weight: bold; display: block; margin-bottom: 10px; color: #ff8c00; text-decoration: none;">{{ similar.title }}</a>
+                    <span style="color: #00ff00; font-size: 14px;">67 руб.</span>
+                </div>
+            {% empty %}
+                <p style="color: #777;">Похожих скинов пока нет (добавьте теги в админке!).</p>
+            {% endfor %}
+        </div>
+
+        <hr style="border-color: #333; margin: 40px 0;">
+
+        {% with comments.count as total_comments %}
+            <h3 style="color: #fff;">{{ total_comments }} комментари{{ total_comments|pluralize:"й,я,ев" }}</h3>
+        {% endwith %}
+        
+        {% for comment in comments %}
+            <div style="background: #222; padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 3px solid #ff8c00;">
+                <p style="font-size: 14px; color: #777; margin-bottom: 10px;">
+                    Комментарий {{ forloop.counter }} от <strong style="color: #fff;">{{ comment.name }}</strong> 
+                    | {{ comment.created|date:"d.m.Y H:i" }}
+                </p>
+                <p style="margin: 0; color: #ccc;">{{ comment.body|linebreaks }}</p>
+            </div>
+        {% empty %}
+            <p style="color: #777;">Комментариев пока нет. Будьте первым!</p>
+        {% endfor %}
+
+        {% if new_comment %}
+            <div style="background: #00c853; color: #000; padding: 15px; border-radius: 4px; margin-top: 40px; font-weight: bold; text-align: center;">
+                ✅ Ваш комментарий успешно добавлен!
+            </div>
+        {% else %}
+            {% include "todo/includes/comment_form.html" with form=comment_form %}
+        {% endif %}
+    </div>
+{% endblock %}

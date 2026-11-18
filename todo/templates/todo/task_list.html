@@ -1,0 +1,181 @@
+{% extends 'todo/base.html' %}
+{% load todo_tags %}
+
+{% block title %}CS2 Рынок Скинов{% endblock %}
+
+{% block tag_header %}
+    {% if tag %}
+        <h2 style="text-align: center; color: #ff8c00;">Скины с тегом "{{ tag.name }}"</h2>
+    {% endif %}
+{% endblock %}
+{% block extra_css %}
+<style>
+    .market-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .skin-card {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .skin-card:hover {
+        transform: translateY(-8px);
+        border-color: #ff8c00;
+        box-shadow: 0 10px 20px rgba(255, 140, 0, 0.2);
+    }
+    .skin-image {
+        background: linear-gradient(135deg, #222 0%, #111 100%);
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #333;
+        position: relative;
+    }
+    .skin-image span {
+        font-size: 60px;
+        filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5));
+    }
+    .badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .badge-available { background-color: #00c853; color: #000; }
+    .badge-draft { background-color: #555; color: #aaa; }
+    .skin-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+    .skin-title { color: #fff; text-decoration: none; font-size: 18px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+    .skin-title:hover { color: #ff8c00; }
+    .skin-meta { font-size: 12px; color: #777; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+    .skin-desc { font-size: 14px; color: #bbb; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+    .skin-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .price { color: #00ff00; font-size: 20px; font-weight: bold; }
+    .price span { font-size: 12px; color: #888; font-weight: normal; }
+    .btn-view { text-decoration: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px; transition: background-color 0.2s; }
+    .btn-view:hover { filter: brightness(0.9); }
+    .pagination { text-align: center; margin-top: 50px; margin-bottom: 20px; font-size: 16px; }
+    .pagination a { color: #ff8c00; text-decoration: none; padding: 8px 16px; border: 1px solid #333; border-radius: 4px; margin: 0 5px; transition: background 0.2s; }
+    .pagination a:hover { background-color: #222; border-color: #ff8c00; }
+    .pagination .current { color: #fff; padding: 8px 16px; margin: 0 5px; }
+    .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px; color: #777; font-size: 18px; }
+    .messages { max-width: 1200px; margin: 0 auto 20px auto; }
+    .alert-success { background: #00c853; color: #000; padding: 15px; border-radius: 5px; font-weight: bold; }
+</style>
+{% endblock %}
+{% block content %}
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Блок статистики (вынесен сюда, так как он нужен только на главной) -->
+    <div style="max-width: 1200px; margin: 0 auto 40px auto; display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #ff8c00; min-width: 250px;">
+            <h3 style="margin-top: 0; color: #fff;">Статистика</h3>
+            <p style="font-size: 16px;">В магазине <strong>67</strong> скинов.</p>
+        </div>
+
+        <div style="flex: 1; background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #ff8c00; min-width: 250px;">
+            <h3 style="margin-top: 0; color: #fff;">Последние поступления</h3>
+            {% show_latest_tasks 3 %}
+        </div>
+
+        <div style="flex: 1; background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #ff8c00; min-width: 250px;">
+            <h3 style="margin-top: 0; color: #fff;">Обсуждаемые</h3>
+            {% get_most_commented_tasks as most_commented %}
+            <ul style="list-style-type: none; padding: 0; margin: 0;">
+                {% for task in most_commented %}
+                    <li style="margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">
+                        <a href="{{ task.get_absolute_url }}" style="color: #ff8c00; text-decoration: none;">{{ task.title }}</a>
+                    </li>
+                {% empty %}
+                    <li style="color: #777;">Нет комментариев.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Сетка скинов -->
+    <div class="market-grid">
+        {% for task in tasks %}
+            <div class="skin-card">
+                <div class="skin-image">
+                    <span>🔫</span>
+                    {% if task.status == 'PB' %}
+                        <div class="badge badge-available">В наличии</div>
+                    {% else %}
+                        <div class="badge badge-draft">Снят с продажи</div>
+                    {% endif %}
+                </div>
+
+                <div class="skin-info">
+                    <a href="{{ task.get_absolute_url }}" class="skin-title">{{ task.title }}</a>
+                    
+                    <div class="skin-meta">
+                        <div class="skin-tags" style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px;">
+                            <span style="color: #777; font-size: 12px; margin-right: 5px; line-height: 22px;">Теги:</span>
+                            {% for tag in task.tags.all %}
+                                <!-- Ищем по имени (name), а не по slug, чтобы русские теги работали -->
+                                <a href="{% url 'todo:task_list_by_tag' tag.name %}" style="background: #333; color: #ff8c00; padding: 3px 8px; border-radius: 12px; font-size: 12px; text-decoration: none; display: inline-block;">
+                                    {{ tag.name }}
+                                </a>
+                            {% empty %}
+                                <span style="color: #555; font-size: 12px; line-height: 22px;">нет</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div style="margin-top: 10px;">
+                            Продавец: {{ task.author.username }} <br>
+                            Добавлено: {{ task.publish|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                    
+                    <div class="skin-desc">
+                        {{ task.content|markdown|truncatewords_html:12 }}
+                    </div>
+
+                    <div class="skin-footer">
+                        <div class="price">
+                            67 <span>руб.</span>
+                        </div>
+                        
+                        {% if task.is_sold %}
+                            <span style="background: #555; color: #aaa; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px;">
+                                ПРОДАНО
+                            </span>
+                        {% else %}
+                            <a href="{% url 'todo:buy_skin' pk=task.pk %}" class="btn-view" style="background-color: #28a745; color: white;">
+                                КУПИТЬ
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <h2>Витрина пуста</h2>
+                <p>Зайдите в админку и добавьте скины.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% include "todo/pagination.html" with page=page_obj %}
+
+{% endblock %}
