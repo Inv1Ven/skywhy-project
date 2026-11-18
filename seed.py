@@ -88,7 +88,7 @@ def generate_skins():
     print("Начинаем генерацию скинов...")
     count = 0
 
-     for title, content in skins:
+    for title, content in skins:
         # Генерируем уникальную ссылку (slug)
         slug = f"{slugify(title)}-{count}"
         
