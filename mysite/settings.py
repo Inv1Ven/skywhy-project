@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3c^=@2o3en-92&1bt^b#)78qk#infz=wbb@!3eeb4oo^9c!sg7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['skywhy-project.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
