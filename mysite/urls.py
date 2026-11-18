@@ -1,3 +1,4 @@
+from django.views.generic import RedirectView
 from django.contrib import admin
 from django.urls import path, include
 from django.urls import path, include
@@ -13,6 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('todo/', include('todo.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+    path('', RedirectView.as_view(url='/todo/', permanent=True)),
          name='django.contrib.sitemaps.views.sitemap')
 ]
 
