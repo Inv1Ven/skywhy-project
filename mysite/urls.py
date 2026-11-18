@@ -13,8 +13,6 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('todo/', include('todo.urls')),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('', RedirectView.as_view(url='/todo/', permanent=True)),
-         name='django.contrib.sitemaps.views.sitemap')
 ]
-
